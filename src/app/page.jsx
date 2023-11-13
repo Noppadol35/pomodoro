@@ -7,7 +7,7 @@ import Alarm from "../components/Alarm";
 import ModalSetting from "../components/ModalSetting";
 import "./globals.css";
 
-function page() {
+function Page() {
   const [pomodoro, setPomodoro] = useState(25);
   const [shortBreak, setShortBreak] = useState(5);
   const [longBreak, setLongBreak] = useState(15);
@@ -152,4 +152,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;
