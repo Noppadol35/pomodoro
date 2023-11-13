@@ -7,6 +7,8 @@ function ModalSetting({
   longBreakRef,
   openSetting,
   setOpenSetting,
+  updateTimeDefaultValue,
+
 }) {
   const options = [
     {
@@ -30,7 +32,7 @@ function ModalSetting({
     <>
       <div className={`absolute h-full w-full left-0 top-0 bg-black bg-opacity-30 ${
         openSetting ? "" : "hidden"
-      }`}  onClick={() =>setOpenSetting(false)} >
+      }`}  >
        
         <div
           className={`max-w-xl bg-white absolute sm:w-96 w-11/12 left-1/2 top-1/2 p-5 rounded-md ${
@@ -63,7 +65,7 @@ function ModalSetting({
               );
             })}
           </div>
-          <button className="bg-green-400 uppercase w-full mt-5 text-white font-bold rounded py-2">
+          <button className="bg-green-400 uppercase w-full mt-5 text-white font-bold rounded py-2" onClick={updateTimeDefaultValue}>
             Save
           </button>
         </div>

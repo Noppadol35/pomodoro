@@ -6,7 +6,9 @@ function Navigation({ setOpenSetting }) {
     <nav className="pt-5 text-white flex justify-between w-11/12 mx-auto">
       <div className="flex items-center gap-1 cursor-pointer font-bold">
         <AccessTime className="text-sm " />
-        <h1>Pomodoro Focus</h1>
+        <a href="https://github.com/Noppadol35/pomodoro">
+          <h1>Pomodoro Focus</h1>
+        </a>
       </div>
       <Settings
         className="text-2xl cursor-pointer"

@@ -26,6 +26,16 @@ function page() {
   const shortBreakRef = useRef();
   const longBreakRef = useRef();
 
+
+  const updateTimeDefaultValue = () =>{
+    setPomodoro(pomodoroRef.current.value);
+    setShortBreak(shortBreakRef.current.value);
+    setLongBreak(longBreakRef.current.value);
+    setOpenSetting(false);
+    setSeconds(0);
+    setConsumedSeconds(0);
+  }
+
   const switchStage = (index) => {
     const isYes =
       consumedSeconds && stage !== index
@@ -61,9 +71,7 @@ function page() {
     setConsumedSeconds(0);
     setTicking(false);
     setSeconds(0);
-    setPomodoro(25);
-    setLongBreak(15);
-    setShortBreak(5);
+    updateTimeDefaultValue();
   };
 
   const timeUp = () => {
@@ -137,6 +145,7 @@ function page() {
           pomodoroRef={pomodoroRef}
           shortBreakRef={shortBreakRef}
           longBreakRef={longBreakRef}
+          updateTimeDefaultValue={updateTimeDefaultValue}
         />
       </div>
     </div>
