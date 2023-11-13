@@ -1,7 +1,18 @@
 "use client";
 import React from "react";
+import VolumeOffIcon from "@mui/icons-material/VolumeOff";
 
-function Timer({stage,switchStage,getTickingTime,seconds,ticking,setTicking}) {
+function Timer({
+  stage,
+  switchStage,
+  getTickingTime,
+  seconds,
+  ticking,
+  startTimer,
+  isTimeUp,
+  muteAlarm,
+  reset,
+}) {
   const options = ["Pomodoro", "Short break", "Long break"];
 
   return (
@@ -22,13 +33,29 @@ function Timer({stage,switchStage,getTickingTime,seconds,ticking,setTicking}) {
         })}
       </div>
       <div className="mt-10 mb-10">
-        <h1 className="text-8xl font-bold select-none m-0">{getTickingTime()}:{seconds.toString().padStart(2, "0")}</h1>
+        <h1 className="text-8xl font-bold select-none m-0">
+          {getTickingTime()}:{seconds.toString().padStart(2, "0")}
+        </h1>
       </div>
-      <button className="px-16 py-2 text-2xl uppercase rounded-md bg-white text-red-400 font-bold " onClick={() => setTicking((ticking) => !ticking)}
-      >
-
-        {ticking? "paus":"Let's Do It!🔥"}
-      </button>
+      <div className="flex gap-2 items-center">
+        <button
+          className="px-16 py-2 text-2xl uppercase rounded-md bg-white text-red-400 font-bold "
+          onClick={startTimer}
+        >
+          {ticking ? "stop" : "Let's Do It!🔥"}
+        </button>
+        {isTimeUp && (
+          <VolumeOffIcon
+            className="text-3xl text-white cursor-pointer"
+            onClick={muteAlarm}
+          />
+        )}
+      </div>
+      {ticking && (
+        <button className="uppercase text-white underline mt-5 " onClick={reset}>
+          Reset 🕗
+        </button>
+      )}
     </div>
   );
 }

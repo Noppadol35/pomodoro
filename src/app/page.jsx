@@ -4,6 +4,7 @@ import Navigation from "../components/Navigation";
 import Timer from "../components/Timer";
 import About from "../components/About";
 import Alarm from "../components/Alarm";
+import ModalSetting from "../components/ModalSetting";
 import "./globals.css";
 
 function page() {
@@ -13,20 +14,29 @@ function page() {
   const [seconds, setSeconds] = useState(0);
   const [ticking, setTicking] = useState(false);
   const [consumedSeconds, setConsumedSeconds] = useState(0);
+  const [isTimeup, setIsTimeUp] = useState(false);
+
+  const [openSetting, setOpenSetting] = useState(false);
 
   const [stage, setStrage] = useState(0);
 
   const AlaramRef = useRef();
 
+  const pomodoroRef = useRef();
+  const shortBreakRef = useRef();
+  const longBreakRef = useRef();
+
   const switchStage = (index) => {
-    const isYes = consumedSeconds && stage !== index ? confirm("Are you sure you want to switch?") : false;
-    if(isYes){
+    const isYes =
+      consumedSeconds && stage !== index
+        ? confirm("Are you sure you want to switch?")
+        : false;
+    if (isYes) {
       reset();
       setStrage(index);
-    } else if (!consumedSeconds){
+    } else if (!consumedSeconds) {
       setStrage(index);
     }
-    
   };
 
   const getTickingTime = () => {
@@ -40,12 +50,12 @@ function page() {
 
   const updateStage = () => {
     const updateStage = {
-      0:setPomodoro,
-      1:setShortBreak,
-      2:setLongBreak,
+      0: setPomodoro,
+      1: setShortBreak,
+      2: setLongBreak,
     };
     return updateStage[stage];
-  }
+  };
 
   const reset = () => {
     setConsumedSeconds(0);
@@ -54,59 +64,80 @@ function page() {
     setPomodoro(25);
     setLongBreak(15);
     setShortBreak(5);
-  }
+  };
 
   const timeUp = () => {
     reset();
+    setIsTimeUp(true);
     AlaramRef.current.play();
-  }
+  };
 
   const clockTicking = () => {
     const minutes = getTickingTime();
     const setMinutes = updateStage();
 
-    if(minutes === 0 && seconds === 0){
+    if (minutes === 0 && seconds === 0) {
       timeUp();
-    }else if(seconds === 0){
+    } else if (seconds === 0) {
       setMinutes((minutes) => minutes - 1);
       setSeconds(59);
-    }else{
+    } else {
       setSeconds((seconds) => seconds - 1);
     }
-  }
+  };
+
+  const muteAlarm = () => {
+    AlaramRef.current.pause();
+    AlaramRef.current.currentTime = 0;
+  };
+
+  const startTimer = () => {
+    setIsTimeUp(false);
+    muteAlarm();
+    setTicking((ticking) => !ticking);
+  };
 
   useEffect(() => {
     window.onbeforeunload = () => {
-      return consumedSeconds ? "Show warning": null; 
-    }
+      return consumedSeconds ? "Show warning" : null;
+    };
 
     const timer = setInterval(() => {
-      if(ticking){
+      if (ticking) {
         setConsumedSeconds((value) => value + 1);
         clockTicking();
       }
-      }, 1000);
+    }, 1000);
 
     return () => {
       clearInterval(timer);
     };
   }, [seconds, pomodoro, shortBreak, longBreak, ticking]);
 
-  
   return (
     <div className="bg-red-400 min-h-screen font-inter">
       <div className=" max-w-2xl min-h-screen mx-auto">
-        <Navigation />
+        <Navigation setOpenSetting={setOpenSetting} />
         <Timer
           stage={stage}
           switchStage={switchStage}
           getTickingTime={getTickingTime}
           seconds={seconds}
           ticking={ticking}
-          setTicking={setTicking}
+          startTimer={startTimer}
+          muteAlarm={muteAlarm}
+          isTimeUp={isTimeup}
+          reset={reset}
         />
         <About />
-        <Alarm ref = {AlaramRef}/>
+        <Alarm ref={AlaramRef} />
+        <ModalSetting
+          openSetting={openSetting}
+          setOpenSetting={setOpenSetting}
+          pomodoroRef={pomodoroRef}
+          shortBreakRef={shortBreakRef}
+          longBreakRef={longBreakRef}
+        />
       </div>
     </div>
   );
