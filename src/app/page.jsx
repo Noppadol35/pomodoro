@@ -1,8 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Navigation from "../components/Navigation";
 import Timer from "../components/Timer";
 import About from "../components/About";
+import Alarm from "../components/Alarm";
 import "./globals.css";
 
 function page() {
@@ -11,11 +12,21 @@ function page() {
   const [longBreak, setLongBreak] = useState(15);
   const [seconds, setSeconds] = useState(0);
   const [ticking, setTicking] = useState(false);
+  const [consumedSeconds, setConsumedSeconds] = useState(0);
 
   const [stage, setStrage] = useState(0);
 
+  const AlaramRef = useRef();
+
   const switchStage = (index) => {
-    setStrage(index);
+    const isYes = consumedSeconds && stage !== index ? confirm("Are you sure you want to switch?") : false;
+    if(isYes){
+      reset();
+      setStrage(index);
+    } else if (!consumedSeconds){
+      setStrage(index);
+    }
+    
   };
 
   const getTickingTime = () => {
@@ -36,12 +47,26 @@ function page() {
     return updateStage[stage];
   }
 
+  const reset = () => {
+    setConsumedSeconds(0);
+    setTicking(false);
+    setSeconds(0);
+    setPomodoro(25);
+    setLongBreak(15);
+    setShortBreak(5);
+  }
+
+  const timeUp = () => {
+    reset();
+    AlaramRef.current.play();
+  }
+
   const clockTicking = () => {
     const minutes = getTickingTime();
     const setMinutes = updateStage();
 
     if(minutes === 0 && seconds === 0){
-      alert("Time's up!");
+      timeUp();
     }else if(seconds === 0){
       setMinutes((minutes) => minutes - 1);
       setSeconds(59);
@@ -51,8 +76,13 @@ function page() {
   }
 
   useEffect(() => {
+    window.onbeforeunload = () => {
+      return consumedSeconds ? "Show warning": null; 
+    }
+
     const timer = setInterval(() => {
       if(ticking){
+        setConsumedSeconds((value) => value + 1);
         clockTicking();
       }
       }, 1000);
@@ -76,6 +106,7 @@ function page() {
           setTicking={setTicking}
         />
         <About />
+        <Alarm ref = {AlaramRef}/>
       </div>
     </div>
   );

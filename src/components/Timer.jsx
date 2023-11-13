@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 
 function Timer({stage,switchStage,getTickingTime,seconds,ticking,setTicking}) {
